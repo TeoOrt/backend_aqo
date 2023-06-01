@@ -24,26 +24,26 @@ In the database we are going to store the meta data such as price, title, etc.
 
 
 """
-
-
-# NOTES - Setting up the database and the Flask App
-
-
 from flask import Flask, request, jsonify
+from dotenv import load_dotenv
 from flask_cors import CORS
 from src.aws import AWS_S3
+import os
 from src.sqlite import Gallery
 app = Flask(__name__)
 CORS(app)
-# Init S3 Client
 
-
+#  NOTE Init for everything
 aws = AWS_S3()
-
-# init SQLite db
-
 gallery = Gallery()
 gallery.create_table()
+
+
+""" - NOTE  Upload Image
+Keyword arguments:
+argument -- Front end upload, title, image, cost, and category,
+Test will be ignored, but still uploaded
+"""
 
 
 @app.route('/upload', methods=['POST'])
@@ -60,29 +60,32 @@ def upload_image():
         'category': request.form.get('category'),
         'image': temp_filename
     }
+
     # reason for function to be outside is for better readability
     gallery.upload_to_db(**args)
     return "LEtttsssss goooo Raytheon"
 
 
-@app.route('/test', methods=['GET'])
-def read_all():
-    return jsonify(gallery.show_table())
+"""         NOTE - Look into Gallery
+Keyword arguments:
+Return: Returning all s3 id's that don't contain Test,this is for our 
+front end to process and get the images
+"""
 
 
 @app.route('/image-gallery', methods=['GET'])
 def retrieve_gallery():
+
     return gallery.retreive_images()
 
 
-@app.route("/debug-delete", methods=['GET'])
-def delete():
-    gallery.delete_section()
-    return "Deleted Debugging"
+@app.route("/debug")
+def home():
+    return "Hello World"
 
 
 # The main
 # Create table is to create the table if the container doesn't have it
 if __name__ == '__main__':
 
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)

@@ -1,0 +1,11 @@
+.git
+.gitignore
+
+.env
+
+.vscode
+
+.DS_Store
+
+.venv
+

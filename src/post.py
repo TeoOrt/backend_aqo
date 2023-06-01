@@ -1,19 +1,37 @@
-import sqlite3 as sql
-import threading
-from flask import jsonify
+"""
+Keyword arguments:
+argument -- description
+Return: return_description
+"""
 
+import threading
+import psycopg2
+from flask import jsonify
+from dotenv import load_dotenv
+import os
 
 local = threading.local()
+
+
+load_dotenv()
 
 
 class Gallery:
 
     def __init__(self) -> None:
-        self.db_path = 'database.db'
+        # Easier to have it stored in a dictionary
+        self.db = {
+
+            'host': os.getenv('DB_HOST'),
+            'port': os.getenv('DB_PORT'),
+            'dbname': os.getenv('DB_NAME'),
+            'user': os.getenv('DB_USER'),
+            'password': os.getenv('DB_PASSWORD')
+        }
 
     def get_db_connection(self):
         if not hasattr(local, 'connection'):
-            local.connection = sql.connect(self.db_path)
+            local.connection = psycopg2.connect(**self.db)
         return local.connection
 
     def get_cursor(self):
@@ -44,17 +62,12 @@ class Gallery:
                         VALUES (?,?,?,?)
                         ''', (kwargs['title'], kwargs['price'], kwargs['image'], kwargs['category']))
         self.get_db_connection().commit()
+        return "Image Success"
 
-
-# debuging
-
-    def delete_section(self):
-
-        cursor = self.get_cursor()
-        cursor.execute("DELETE FROM gallery WHERE category = 'Test'")
-        self.get_db_connection().commit()
 
 # function used for debugging
+
+
     def show_table_entire(self):
 
         cursor = self.get_cursor()
