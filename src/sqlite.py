@@ -48,6 +48,7 @@ class Gallery:
 
 # debuging
 
+
     def delete_section(self):
 
         cursor = self.get_cursor()
@@ -70,6 +71,23 @@ class Gallery:
 
         objects = []
 
+        for row in rows:
+            obj = {
+                'id': row[0],
+                'title': row[1],
+                'price': row[2],
+                's3_id': row[3],
+                'category': row[4]
+            }
+            objects.append(obj)
+        self.get_db_connection().commit()
+        return jsonify(objects)
+
+    def retrieve_catalog(self):
+        cursor = self.get_cursor()
+        cursor.execute("SELECT * FROM gallery WHERE category = 'Catalog'")
+        rows = cursor.fetchall()
+        objects = []
         for row in rows:
             obj = {
                 'id': row[0],

@@ -63,14 +63,7 @@ def upload_image():
 
     # reason for function to be outside is for better readability
     gallery.upload_to_db(**args)
-    return "LEtttsssss goooo Raytheon"
-
-
-"""         NOTE - Look into Gallery
-Keyword arguments:
-Return: Returning all s3 id's that don't contain Test,this is for our 
-front end to process and get the images
-"""
+    return "Completed upload"
 
 
 @app.route('/image-gallery', methods=['GET'])
@@ -79,9 +72,9 @@ def retrieve_gallery():
     return gallery.retreive_images()
 
 
-@app.route("/debug")
-def home():
-    return "Hello World"
+@app.route("/get-catalog", methods=['GET'])
+def retrieve_cat():
+    return gallery.retrieve_catalog()
 
 
 # The main
